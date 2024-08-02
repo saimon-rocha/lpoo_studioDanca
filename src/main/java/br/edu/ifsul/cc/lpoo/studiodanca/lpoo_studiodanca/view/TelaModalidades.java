@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author vanessalagomachado
+ * @author saimon-rocha
  */
 public class TelaModalidades extends javax.swing.JFrame {
 
