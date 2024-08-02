@@ -1,11 +1,13 @@
+package view;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package br.edu.ifsul.cc.lpoo.studiodanca.lpoo_studiodanca.view;
 
 import br.edu.ifsul.cc.lpoo.studiodanca.lpoo_studiodanca.dao.PersistenciaJPA;
 import br.edu.ifsul.cc.lpoo.studiodanca.lpoo_studiodanca.model.Modalidade;
+import br.edu.ifsul.cc.lpoo.studiodanca.lpoo_studiodanca.view.TelaCadastroModalidade;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
