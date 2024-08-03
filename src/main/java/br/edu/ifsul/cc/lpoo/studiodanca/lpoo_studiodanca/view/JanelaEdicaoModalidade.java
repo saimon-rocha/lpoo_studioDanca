@@ -7,6 +7,7 @@ package br.edu.ifsul.cc.lpoo.studiodanca.lpoo_studiodanca.view;
 import br.edu.ifsul.cc.lpoo.studiodanca.lpoo_studiodanca.dao.PersistenciaJPA;
 import br.edu.ifsul.cc.lpoo.studiodanca.lpoo_studiodanca.model.Modalidade;
 import br.edu.ifsul.cc.lpoo.studiodanca.lpoo_studiodanca.model.Professor;
+import java.awt.Frame;
 import java.util.List;
 import javax.swing.JOptionPane;
 
@@ -14,20 +15,24 @@ import javax.swing.JOptionPane;
  *
  * @author saimon-rocha
  */
-public class TelaCadastroModalidade extends javax.swing.JDialog {
+public class JanelaEdicaoModalidade extends javax.swing.JDialog {
 
     private Modalidade modalidade;
-    PersistenciaJPA jpa;
+    private PersistenciaJPA jpa;
 
     /**
      * Creates new form TelaCadastroModalidade
      */
-    public TelaCadastroModalidade(java.awt.Frame parent, boolean modal) {
+    public JanelaEdicaoModalidade(Frame parent, boolean modal, Modalidade modalidadePersistido, PersistenciaJPA jpa1) {
         super(parent, modal);
         initComponents();
-        listarProfessores();
+        this.modalidade = modalidadePersistido; // Corrigir aqui
+        this.jpa = jpa1;
+        listarProfessores(); // Preenche a lista de professores
+        preencherCampos(); // Preenche os campos com os dados da modalidade
     }
 
+    //Preenche no campo da listagem de professores
     public void listarProfessores() {
         cmbProfessores.removeAllItems();
         jpa = new PersistenciaJPA();
@@ -37,7 +42,14 @@ public class TelaCadastroModalidade extends javax.swing.JDialog {
             cmbProfessores.addItem(o);
         }
         jpa.fecharConexao();
+    }
 
+    //Preenche no campo na listagem de modalidades
+    private void preencherCampos() {
+        if (modalidade != null) {
+            txtDescricao.setText(modalidade.getDescricao());
+            cmbProfessores.setSelectedItem(modalidade.getProfessor());
+        }
     }
 
     /**
@@ -59,7 +71,7 @@ public class TelaCadastroModalidade extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jLabel1.setText("Cadastro de Modalidade");
+        jLabel1.setText("Edição de Modalidade");
 
         jLabel2.setText("Descrição:");
 
@@ -84,33 +96,33 @@ public class TelaCadastroModalidade extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(60, 60, 60)
+                .addGap(74, 74, 74)
                 .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
                 .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(25, 25, 25))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(82, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3))
                         .addGap(34, 34, 34)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtDescricao)
-                            .addComponent(cmbProfessores, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(54, 54, 54)
-                        .addComponent(jLabel1)))
-                .addGap(81, 81, 81))
+                            .addComponent(cmbProfessores, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(81, 81, 81))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(136, 136, 136))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(27, 27, 27)
-                .addComponent(jLabel1)
                 .addGap(28, 28, 28)
+                .addComponent(jLabel1)
+                .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txtDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -129,28 +141,23 @@ public class TelaCadastroModalidade extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        // Criando nova modalidade
-        if (modalidade == null) {
-            modalidade = new Modalidade();
+        if (modalidade != null) {
+            // Atualiza modalidade
             modalidade.setDescricao(txtDescricao.getText());
             modalidade.setProfessor((Professor) cmbProfessores.getSelectedItem());
-
             jpa = new PersistenciaJPA();
-            jpa.conexaoAberta();
-            jpa.persist(modalidade);
-            JOptionPane.showMessageDialog(this, "Modalidade Cadastrada com sucesso!");
-            jpa.fecharConexao();
-            dispose();
-
+            try {
+                jpa.conexaoAberta();
+                jpa.update(modalidade);
+                JOptionPane.showMessageDialog(this, "Modalidade atualizada com sucesso!");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Erro ao atualizar a modalidade: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            } finally {
+                jpa.fecharConexao();
+                dispose();
+            }
         } else {
-            // Edição da modalidade -- Atividade para dia 07-08
-            // Implementado uma tela JanelaEdicaoModalidade
-            // A qual é chamada na TelaModalidade -> caso selecione uma modalidade
-            // E clique em editar ela abre essa tela para editar
-            // E caso selecione cadastrar ela abre essa tela que cá estamos
-            // Para cadastrar uma modalidade.
-            // Não compreendi se era para ser assim ! irei tirar essa dúvida em aula
-            // IMPLEMENTADO JANELAEDIÇÃO E VINCULADO O CADASTRO E EDIÇÃO A TELA MODALIDADE
+            JOptionPane.showMessageDialog(this, "Nenhuma modalidade selecionada para atualizar.", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnSalvarActionPerformed
 
@@ -176,34 +183,27 @@ public class TelaCadastroModalidade extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TelaCadastroModalidade.class
+            java.util.logging.Logger.getLogger(JanelaEdicaoModalidade.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TelaCadastroModalidade.class
+            java.util.logging.Logger.getLogger(JanelaEdicaoModalidade.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TelaCadastroModalidade.class
+            java.util.logging.Logger.getLogger(JanelaEdicaoModalidade.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(TelaCadastroModalidade.class
+            java.util.logging.Logger.getLogger(JanelaEdicaoModalidade.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                TelaCadastroModalidade dialog = new TelaCadastroModalidade(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
             }
         });
     }

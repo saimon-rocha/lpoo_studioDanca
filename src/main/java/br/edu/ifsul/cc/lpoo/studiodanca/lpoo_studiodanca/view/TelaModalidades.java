@@ -23,23 +23,20 @@ public class TelaModalidades extends javax.swing.JFrame {
      */
     public TelaModalidades() {
         initComponents();
-//        jpa = new PersistenciaJPA();
+        jpa = new PersistenciaJPA();
         listarModalidades();
     }
 
     public void listarModalidades() {
         lstModalidades.clearSelection();
-        jpa = new PersistenciaJPA();
         jpa.conexaoAberta();
         List<Modalidade> lista = jpa.getModalidades();
-        System.out.println("Lista: " + lista);
-        DefaultListModel modeloLista = new DefaultListModel<>();
+        DefaultListModel<Modalidade> modeloLista = new DefaultListModel<>();
         for (Modalidade m : lista) {
             modeloLista.addElement(m);
         }
         lstModalidades.setModel(modeloLista);
         jpa.fecharConexao();
-
     }
 
     /**
@@ -136,7 +133,7 @@ public class TelaModalidades extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
-        Modalidade m = new Modalidade();
+        /*Modalidade m = new Modalidade();
         m.setDescricao(JOptionPane.showInputDialog("Informe a descrição da modalidade:"));
 
         jpa = new PersistenciaJPA();
@@ -144,7 +141,10 @@ public class TelaModalidades extends javax.swing.JFrame {
         jpa.persist(m);
         jpa.fecharConexao();
 
-        listarModalidades();
+        listarModalidades();*/
+        //Abre a tela de Cadastro de Modalidade
+        TelaCadastroModalidade tcm = new TelaCadastroModalidade(this, true);
+        tcm.setVisible(true);
     }//GEN-LAST:event_btnNovoActionPerformed
 
     private void btnRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverActionPerformed
@@ -173,11 +173,35 @@ public class TelaModalidades extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnRemoverActionPerformed
 
+    //Abre a Tela de Edição da Modalidade
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
-        Modalidade modalidadeSelecionada
-                = lstModalidades.getSelectedValue();
+        Modalidade modalidadeSelecionada = lstModalidades.getSelectedValue();
         if (modalidadeSelecionada != null) {
-
+            PersistenciaJPA jpa = null; //garantir que ela seja local
+            try {
+                jpa = new PersistenciaJPA();
+                jpa.conexaoAberta();
+                Modalidade modalidadePersistido = (Modalidade) jpa.find(Modalidade.class, modalidadeSelecionada.getId());
+                if (modalidadePersistido != null) {
+                    JanelaEdicaoModalidade dialog = new JanelaEdicaoModalidade(this, true, modalidadePersistido, jpa);
+                    dialog.setVisible(true);
+                    listarModalidades();
+                } else {
+                    System.err.println("Modalidade não encontrada.");
+                }
+            } catch (Exception e) {
+                System.err.println("Erro ao editar modalidade: " + e.getMessage());
+            } finally {
+                if (jpa != null) {
+                    jpa.fecharConexao();
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Nenhuma modalidade selecionada", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+        /*
+        Modalidade modalidadeSelecionada = lstModalidades.getSelectedValue();
+        if (modalidadeSelecionada != null) {
             try {
                 jpa = new PersistenciaJPA();
                 jpa.conexaoAberta();
@@ -199,7 +223,7 @@ public class TelaModalidades extends javax.swing.JFrame {
                 jpa.fecharConexao();
             }
 
-        }
+        }*/
     }//GEN-LAST:event_btnEditarActionPerformed
 
     /**
